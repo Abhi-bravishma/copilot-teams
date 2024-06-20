@@ -13,20 +13,20 @@ const axios = require("axios");
 require("dotenv").config();
 
 // For server
-const credConfig = require("./config");
-let config = {
-  MicrosoftAppId: credConfig.MicrosoftAppId,
-  MicrosoftAppPassword: credConfig.MicrosoftAppPassword,
-  MicrosoftAppType: "MultiTenant",
-};
+// const credConfig = require("./config");
+// let config = {
+//   MicrosoftAppId: credConfig.MicrosoftAppId,
+//   MicrosoftAppPassword: credConfig.MicrosoftAppPassword,
+//   MicrosoftAppType: "MultiTenant",
+// };
 // For server end
 
 // for llocal
-// let config = {
-//   MicrosoftAppId: process.env.MicrosoftAppId,
-//   MicrosoftAppPassword: process.env.MicrosoftAppPassword,
-//   MicrosoftAppType: "MultiTenant",
-// };
+let config = {
+  MicrosoftAppId: process.env.MicrosoftAppId,
+  MicrosoftAppPassword: process.env.MicrosoftAppPassword,
+  MicrosoftAppType: "MultiTenant",
+};
 // for llocal end
 
 console.log("config==> ", config);
@@ -203,11 +203,12 @@ async function sendInitialMessage(conversationDetails, contextData) {
         id: "5839aa31-0a18-4ae6-bf9a-074b29de79b3",
         role: "user",
       },
+      teamsmsg:contextData
     });
 
     const url = `https://directline.botframework.com/v3/directline/conversations/${conversationId}/activities`;
 
-    const response = await axios.post(url, body, { headers }, contextData);
+    const response = await axios.post(url, body, { headers });
 
     console.log("Initial message sent:", response.data);
     return response.data; // Optional: Return data if needed
