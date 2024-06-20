@@ -165,7 +165,8 @@ async function handleTeamsMessage(context) {
 
     // Send context to Copilot (API call)
     // await sendToCopilotApi(contextData);
-    await sendInitialMessage(contextData);
+    // await sendInitialMessage(contextData);
+    await sendMessageAgain(contextData);
 
     // Listen for Copilot messages through WebSocket
     // listenForCopilotMessages();
@@ -186,37 +187,79 @@ function extractContext(messageText) {
   return { messageText }; // Placeholder for extracted context
 }
 
-async function sendInitialMessage(conversationDetails, contextData) {
-  try {
-    const { conversationId, token } = conversationDetails;
+// async function sendInitialMessage(conversationDetails, contextData) {
+//   try {
+//     const { conversationId, token } = conversationDetails;
 
-    const headers = {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    };
+//     const headers = {
+//       Authorization: `Bearer ${token}`,
+//       "Content-Type": "application/json",
+//     };
 
-    const body = JSON.stringify({
-      name: "startConversation",
-      locale: "en-EN", // Example: Change as per your requirement
-      type: "event",
-      from: {
-        id: "5839aa31-0a18-4ae6-bf9a-074b29de79b3",
-        role: "user",
-      },
-      teamsmsg:contextData
-    });
+//     const body = JSON.stringify({
+//       name: "startConversation",
+//       locale: "en-EN", // Example: Change as per your requirement
+//       type: "event",
+//       from: {
+//         id: "5839aa31-0a18-4ae6-bf9a-074b29de79b3",
+//         role: "user",
+//       },
+//       teamsmsg:contextData
+//     });
 
-    const url = `https://directline.botframework.com/v3/directline/conversations/${conversationId}/activities`;
+//     const url = `https://directline.botframework.com/v3/directline/conversations/${conversationId}/activities`;
 
-    const response = await axios.post(url, body, { headers });
+//     const response = await axios.post(url, body, { headers });
 
-    console.log("Initial message sent:", response.data);
-    return response.data; // Optional: Return data if needed
-  } catch (error) {
-    console.error("Error sending initial message:", error.message);
-    throw error; // Propagate error up the call stack
-  }
+//     console.log("Initial message sent:", response.data);
+//     return response.data; // Optional: Return data if needed
+//   } catch (error) {
+//     console.error("Error sending initial message:", error.message);
+//     throw error; // Propagate error up the call stack
+//   }
+// }
+
+
+async function sendMessageAgain(conversionDetails, contextData) {
+  const { conversationId, streamUrl, token } = conversionDetails;
+  console.log('conversionDetails');
+  let headersList = {
+    authority: 'directline.botframework.com',
+    accept: '*/*',
+    'accept-language': 'en-US,en;q=0.9',
+    authorization: `Bearer ${token}`,
+    'content-type': 'application/json',
+    type: 'message',
+    text: 'test',
+  };
+
+  let bodyContent = JSON.stringify({
+    // locale: 'en-EN',
+    locale: this.locale,
+
+    type: 'message',
+    value: this.rating,
+
+    from: {
+      id: 'user1',
+      role: 'user',
+    },
+    text: contextData,
+  });
+
+  let response = await fetch(
+    `https://directline.botframework.com/v3/directline/conversations/${conversationId}/activities`,
+    {
+      method: 'POST',
+      body: bodyContent,
+      headers: headersList,
+    }
+  );
+
+  let data = await response.text();
+  console.log('wtf', data);
 }
+
 
 async function getToken() {
   try {
