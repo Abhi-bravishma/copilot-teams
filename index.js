@@ -12,13 +12,22 @@ const WebSocket = require("ws");
 const axios = require("axios");
 require("dotenv").config();
 
+// For server
+const credConfig = require("./config");
 let config = {
-  MicrosoftAppId: process.env.MicrosoftAppId,
-  MicrosoftAppPassword: process.env.MicrosoftAppPassword,
-  MicrosoftAppType: "MultiTenant", 
+  MicrosoftAppId: credConfig.MicrosoftAppId,
+  MicrosoftAppPassword: credConfig.MicrosoftAppPassword,
+  MicrosoftAppType: "MultiTenant",
 };
-console.log("MicrosoftAppId:", process.env.MicrosoftAppId);
-console.log("MicrosoftAppPassword:", process.env.MicrosoftAppPassword);
+// For server end
+
+// for llocal
+// let config = {
+//   MicrosoftAppId: process.env.MicrosoftAppId,
+//   MicrosoftAppPassword: process.env.MicrosoftAppPassword,
+//   MicrosoftAppType: "MultiTenant",
+// };
+// for llocal end
 
 console.log("config==> ", config);
 
@@ -40,6 +49,15 @@ const adapter = new BotFrameworkAdapter({
 const server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function () {
   console.log(`\n${server.name} listening to ${server.url}`);
+});
+
+server.get("/", async (req, res) => {
+  res.setHeader("Content-Type", "text/html");
+  res.writeHead(200);
+  res.write(
+    `<html><body><h1>Copilot teams bot backend working</h1></body></html>`
+  );
+  res.end();
 });
 
 // server.post("/copilot-messaging", async (req, res) => {
